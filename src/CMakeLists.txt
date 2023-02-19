@@ -1,7 +1,12 @@
+
+# Compiler Flags for PSVita (below line and std c++11)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wl,-q -O2 -ffast-math -mtune=cortex-a9 -mfpu=neon -ftree-vectorize -Wno-deprecated-declarations")
+
+
 # Compile flags as defined in global CMakeLists
-set(CMAKE_CXX_FLAGS ${COLOBOT_CXX_FLAGS})
-set(CMAKE_CXX_FLAGS_RELEASE ${COLOBOT_CXX_FLAGS_RELEASE})
-set(CMAKE_CXX_FLAGS_DEBUG ${COLOBOT_CXX_FLAGS_DEBUG})
+set(CMAKE_CXX_FLAGS "${COLOBOT_CXX_FLAGS} ${CMAKE_C_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS_RELEASE "${COLOBOT_CXX_FLAGS_RELEASE} ${CMAKE_C_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS_DEBUG "${COLOBOT_CXX_FLAGS_DEBUG} ${CMAKE_C_FLAGS} -std=c++11")
 
 # Subdirectories
 add_subdirectory(CBot)
@@ -146,8 +151,6 @@ add_library(colobotbase STATIC
     graphics/opengl/gl14device.h
     graphics/opengl/gl21device.cpp
     graphics/opengl/gl21device.h
-    graphics/opengl/gl33device.cpp
-    graphics/opengl/gl33device.h
     graphics/opengl/glframebuffer.cpp
     graphics/opengl/glframebuffer.h
     graphics/opengl/glutil.cpp
@@ -468,6 +471,11 @@ add_library(colobotbase STATIC
     ui/screen/screen_welcome.h
     ui/studio.cpp
     ui/studio.h
+    
+    glew/eglew.h
+    glew/glew.h
+    glew/glxew.h
+    glew/wglew.h
 )
 
 target_include_directories(colobotbase PUBLIC
@@ -480,17 +488,52 @@ target_include_directories(colobotbase PUBLIC
 target_link_libraries(colobotbase PUBLIC
     CBot
     localename
-    SDL2::Core
     SDL2::Image
     SDL2::TTF
-    OpenGL::GL
+    SDL2::SDL2-static
+    #OpenGL::GL
     PNG::PNG
-    GLEW::GLEW
+    #GLEW::GLEW
     Boost::headers
     Boost::filesystem
     Boost::regex
     PhysFS::PhysFS
     SndFile::sndfile
+
+    #Vita specific
+    #SDL2::SDL2
+    Threads::Threads
+
+    vitaGL
+    vitashark
+    z
+  jpeg
+  png
+  png16
+  freetype
+  webp
+  taihen_stub
+  kubridge_stub
+  SceAppMgr_stub
+  SceAppUtil_stub
+  SceAudio_stub
+  SceAudioIn_stub
+  SceCtrl_stub
+  SceCommonDialog_stub
+  SceDisplay_stub
+  SceIme_stub
+  SceHid_stub
+  ScePower_stub
+  SceTouch_stub
+  SceMotion_stub
+  SceVshBridge_stub
+  mathneon
+  SceKernelDmacMgr_stub
+  SceGxm_stub
+  SceShaccCg_stub
+  SceShaccCg_stub_weak
+  SceSysmodule_stub
+  #SceSharedFb_stub
 )
 
 if(mpg123_FOUND)
@@ -601,7 +644,7 @@ endif()
 if(PLATFORM_WINDOWS)
     target_sources(colobot PRIVATE ../desktop/colobot.rc)
 endif()
-target_link_libraries(colobot colobotbase SDL2::Main)
+target_link_libraries(colobot colobotbase SDL2::SDL2main)
 
 # Install
 install(TARGETS colobot RUNTIME DESTINATION ${COLOBOT_INSTALL_BIN_DIR})

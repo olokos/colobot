@@ -240,10 +240,10 @@ option(HIDE_CONSOLE "Hide console" OFF)
 option(USE_RELATIVE_PATHS "Generate relative paths from absolute paths" OFF)
 
 # Portable build - load all data from the base directory
-option(PORTABLE "Portable build" OFF)
+option(PORTABLE "Portable build" ON)
 
 # Portable saves - suitable for e.g. putting the whole game on external storage and moving your saves with it
-option(PORTABLE_SAVES "Portable saves" OFF)
+option(PORTABLE_SAVES "Portable saves" ON)
 
 # Building tests can be enabled/disabled
 option(TESTS "Build tests" OFF)
@@ -261,19 +261,19 @@ option(INSTALL_DOCS "Install Doxygen-generated documentation" OFF)
 option(OPENAL_SOUND "Build OpenAL sound support" ON)
 
 # Link runtime library statically (currently only works for MSVC)
-option(USE_STATIC_RUNTIME "Link the runtime library statically" OFF)
+option(USE_STATIC_RUNTIME "Link the runtime library statically" ON)
 
 # CBot can also be a static library
-option(CBOT_STATIC "Build CBot as static libary" OFF)
+option(CBOT_STATIC "Build CBot as static libary" ON)
 
 # This is useful in case you want to use static boost libraries
-option(BOOST_STATIC "Link with static boost libraries" OFF)
+option(BOOST_STATIC "Link with static boost libraries" ON)
 
 # This is useful on Windows, if linking against standard GLEW dll fails
-option(GLEW_STATIC "Link statically with GLEW" OFF)
+option(GLEW_STATIC "Link statically with GLEW" ON)
 
 # Link statically with LibSndFile
-option(SNDFILE_STATIC "Link statically with LibSndFile" OFF)
+option(SNDFILE_STATIC "Link statically with LibSndFile" ON)
 
 # Sometimes helpful if there is a different version of gtest installed on system vs bundled
 option(FORCE_BUNDLED_GTEST "Force the use of bundled gtest" OFF)
@@ -306,7 +306,10 @@ include("${colobot_SOURCE_DIR}/cmake/colobot-lint.cmake")
 # Searching for packages
 ##
 
-find_package(OpenGL 1.4 REQUIRED)
+# Below 2 are for PSVita
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
@@ -314,15 +317,14 @@ find_package(PNG 1.2 REQUIRED)
 find_package(Gettext REQUIRED)
 find_package(PhysFS REQUIRED)
 
-set(Boost_USE_STATIC_LIBS ${BOOST_STATIC})
 set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME ${USE_STATIC_RUNTIME})
+set(Boost_USE_STATIC_RUNTIME ON)
+set(Boost_USE_STATIC_LIBS ON)
 
 set(Boost_ADDITIONALVERSION "1.51" "1.51.0")
 find_package(Boost COMPONENTS system filesystem regex REQUIRED)
 
-set(GLEW_USE_STATIC_LIBS ${GLEW_STATIC})
-find_package(GLEW REQUIRED)
+set(GLEW_USE_STATIC_LIBS ON)
 
 if (OPENAL_SOUND)
     find_package(OpenAL REQUIRED)
