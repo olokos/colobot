@@ -33,6 +33,7 @@
 #include <algorithm>
 
 #include <vitaGL.h>
+#include "vitaIncludes.h"
 
 // Graphics module namespace
 namespace Gfx
@@ -41,6 +42,8 @@ namespace Gfx
 GLuint textureCoordinates[] = { GL_S, GL_T, GL_R, GL_Q };
 GLuint textureCoordGen[] = { GL_TEXTURE_GEN_S, GL_TEXTURE_GEN_T, GL_TEXTURE_GEN_R, GL_TEXTURE_GEN_Q };
 
+
+/* Vita doesn't support GLEW so don't initialize it!
 bool InitializeGLEW()
 {
     static bool glewInited = false;
@@ -61,26 +64,30 @@ bool InitializeGLEW()
     return true;
 }
 
+*/
+
 FramebufferSupport DetectFramebufferSupport()
 {
+    /* No OpenGL 3.0 support on Vita
     if (GetOpenGLVersion() >= 30) return FBS_ARB;
     if (glewIsSupported("GL_ARB_framebuffer_object")) return FBS_ARB;
-    if (glewIsSupported("GL_EXT_framebuffer_object")) return FBS_EXT;
+    */
+    if (GL_EXTENSIONS) return FBS_EXT;
     return FBS_NONE;
 }
 
 std::unique_ptr<CDevice> CreateDevice(const DeviceConfig &config, const std::string& name)
 {
-    if      (name == "default") return MakeUnique<CGL14Device>(config);
-    else if (name == "opengl")  return MakeUnique<CGL14Device>(config);
-    else if (name == "gl14")    return MakeUnique<CGL14Device>(config);
-    else if (name == "gl21")    return MakeUnique<CGL21Device>(config);
+    //if      (name == "default") return MakeUnique<CGL14Device>(config);
+    //else if (name == "opengl")  return MakeUnique<CGL14Device>(config);
+    //else if (name == "gl14")    return MakeUnique<CGL14Device>(config);
+    if (name == "gl21")    return MakeUnique<CGL21Device>(config);
     else if (name == "auto")
     {
         int version = GetOpenGLVersion();
 
             if (version >= 21) return MakeUnique<CGL21Device>(config);
-        else                    return MakeUnique<CGL14Device>(config);
+            else          return MakeUnique<CGL21Device>(config); // On Vita we want to use the 2.1 device regardless of what OpenGL is returned
     }
 
     return nullptr;
@@ -200,7 +207,7 @@ std::string GetHardwareInfo(bool full)
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &value);
     result << "Max Texture Size:\t\t" << value << '\n';
 
-    if (glewIsSupported("GL_EXT_texture_filter_anisotropic"))
+    if (true) // Assume Vita does support texture anisotropy filtering!
     {
         result << "Anisotropic filtering:\t\tsupported\n";
 
@@ -262,7 +269,7 @@ std::string GetHardwareInfo(bool full)
         glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS_EXT, &value);
         result << "    Max Color Attachments:\t" << value << '\n';
 
-        if (glewIsSupported("GL_EXT_framebuffer_multisample"))
+        if (true) // Assume Vita does support framebuffer sampling! WHICH MIGHT NOT BE TRUE!
         {
             result << "Multisampling:\tsupported\n";
 
@@ -280,7 +287,7 @@ std::string GetHardwareInfo(bool full)
     {
         result << "VBO:\t\t\tsupported (core)\n";
     }
-    else if (glewIsSupported("GL_ARB_vertex_buffer_object"))
+    else if (false) // Vita does not support core extensions (OpenGL 3.0)!
     {
         result << "VBO:\t\t\tsupported (ARB)\n";
     }
