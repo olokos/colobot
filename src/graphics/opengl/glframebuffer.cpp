@@ -84,10 +84,13 @@ bool CGLFramebuffer::Create()
         glGenRenderbuffers(1, &m_colorRenderbuffer);
         glBindRenderbuffer(GL_RENDERBUFFER, m_colorRenderbuffer);
 
+
+        /* no multispampling on Vita yet 
         if (m_params.samples > 1)
             glRenderbufferStorageMultisample(GL_RENDERBUFFER, m_params.samples,
                     GL_RGBA8, m_params.width, m_params.height);
         else
+        */
             glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, m_params.width, m_params.height);
 
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -97,7 +100,8 @@ bool CGLFramebuffer::Create()
     }
     else
     {
-        glDrawBuffer(GL_NONE);
+        //exit(-1337); // Just exit if no framebuffer can be created
+        //glDrawBuffers(GL_NONE);
     }
 
     GLuint depthFormat = 0;
@@ -144,10 +148,12 @@ bool CGLFramebuffer::Create()
         glGenRenderbuffers(1, &m_depthRenderbuffer);
         glBindRenderbuffer(GL_RENDERBUFFER, m_depthRenderbuffer);
 
+        /* No multisampling for vita yet 
         if (m_params.samples > 1)
             glRenderbufferStorageMultisample(GL_RENDERBUFFER, m_params.samples,
                     depthFormat, m_params.width, m_params.height);
         else
+        */
             glRenderbufferStorage(GL_RENDERBUFFER,
                     depthFormat, m_params.width, m_params.height);
 
@@ -294,8 +300,10 @@ void CGLFramebuffer::CopyToScreen(int fromX, int fromY, int fromWidth, int fromH
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
+    /* disabled for now VITA TODO FIXME 
     glBlitFramebuffer(fromX, fromY, fromX + fromWidth, fromY + fromHeight,
         toX, toY, toX + toWidth, toY + toHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+*/
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_currentFBO);
 }
@@ -326,8 +334,8 @@ bool CGLFramebufferEXT::Create()
     m_depth = m_params.depth;
     m_samples = m_params.samples;
 
-    glGenFramebuffersEXT(1, &m_fbo);
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+    glGenFramebuffers(1, &m_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
     // create color texture
     if (m_params.colorAttachment == FramebufferParams::AttachmentType::Texture)
@@ -349,30 +357,33 @@ bool CGLFramebufferEXT::Create()
 
         glBindTexture(GL_TEXTURE_2D, previous);
 
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,
-                GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_colorTexture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER,
+                GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_colorTexture, 0);
     }
     // create color renderbuffer
     else if (m_params.colorAttachment == FramebufferParams::AttachmentType::Renderbuffer)
     {
-        glGenRenderbuffersEXT(1, &m_colorRenderbuffer);
-        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_colorRenderbuffer);
+        glGenRenderbuffers(1, &m_colorRenderbuffer);
+        glBindRenderbuffer(GL_RENDERBUFFER, m_colorRenderbuffer);
 
         if (m_params.samples > 1)
-            glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT,
+        /* No multisampling on vita
+            glRenderbufferStorageMultisample(GL_RENDERBUFFER,
                     m_params.samples, GL_RGBA8, m_params.width, m_params.height);
         else
-            glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA8,
+        */
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8,
                     m_params.width, m_params.height);
 
-        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
-                GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, m_colorRenderbuffer);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER,
+                GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_colorRenderbuffer);
     }
     else
     {
-        glDrawBuffer(GL_NONE);
+        exit(-1337); //No renderbuffer created?!
+        //glDrawBuffers(GL_NONE);
     }
 
     GLuint depthFormat = 0;
@@ -410,29 +421,31 @@ bool CGLFramebufferEXT::Create()
 
         glBindTexture(GL_TEXTURE_2D, previous);
 
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,
-                GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_depthTexture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER,
+                GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthTexture, 0);
     }
     // create depth renderbuffer
     else if (m_params.depthAttachment == FramebufferParams::AttachmentType::Renderbuffer)
     {
-        glGenRenderbuffersEXT(1, &m_depthRenderbuffer);
-        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthRenderbuffer);
+        glGenRenderbuffers(1, &m_depthRenderbuffer);
+        glBindRenderbuffer(GL_RENDERBUFFER, m_depthRenderbuffer);
 
         if (m_params.samples > 1)
+        /* No multisampling on Vita 
             glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT,
                     m_params.samples, depthFormat, m_params.width, m_params.height);
         else
-            glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, depthFormat, m_params.width, m_params.height);
+        */
+            glRenderbufferStorage(GL_RENDERBUFFER, depthFormat, m_params.width, m_params.height);
 
-        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
-                GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthRenderbuffer);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER,
+                GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthRenderbuffer);
     }
 
-    GLuint result = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-    if (result != GL_FRAMEBUFFER_COMPLETE_EXT)
+    GLuint result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (result != GL_FRAMEBUFFER_COMPLETE)
     {
         GetLogger()->Error("Framebuffer incomplete: ");
 
@@ -460,11 +473,11 @@ bool CGLFramebufferEXT::Create()
 
         Destroy();
 
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_currentFBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_currentFBO);
         return false;
     }
 
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_currentFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_currentFBO);
     return true;
 }
 
@@ -473,14 +486,14 @@ void CGLFramebufferEXT::Destroy()
     if (m_fbo == 0) return;
 
     if (m_currentFBO == m_fbo)
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    glDeleteFramebuffersEXT(1, &m_fbo);
+    glDeleteFramebuffers(1, &m_fbo);
     m_fbo = 0;
 
     if (m_colorRenderbuffer != 0)
     {
-        glDeleteRenderbuffersEXT(1, &m_colorRenderbuffer);
+        glDeleteRenderbuffers(1, &m_colorRenderbuffer);
         m_colorRenderbuffer = 0;
     }
 
@@ -492,7 +505,7 @@ void CGLFramebufferEXT::Destroy()
 
     if (m_depthRenderbuffer != 0)
     {
-        glDeleteRenderbuffersEXT(1, &m_depthRenderbuffer);
+        glDeleteRenderbuffers(1, &m_depthRenderbuffer);
         m_depthRenderbuffer = 0;
     }
 
@@ -552,27 +565,30 @@ int CGLFramebufferEXT::GetDepthTexture()
 //! Binds this framebuffer to context
 void CGLFramebufferEXT::Bind()
 {
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     m_currentFBO = m_fbo;
 }
 
 //! Unbinds this framebuffer from context
 void CGLFramebufferEXT::Unbind()
 {
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     m_currentFBO = 0;
 }
 
 void CGLFramebufferEXT::CopyToScreen(int fromX, int fromY, int fromWidth, int fromHeight,
         int toX, int toY, int toWidth, int toHeight)
 {
-    glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_fbo);
-    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, 0);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-    glBlitFramebufferEXT(fromX, fromY, fromX + fromWidth, fromY + fromHeight,
+
+    /* disabled for now VITA TODO FIXME 
+    glBlitFramebuffer(fromX, fromY, fromX + fromWidth, fromY + fromHeight,
             toX, toY, toX + toWidth, toY + toHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    */
 
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_currentFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_currentFBO);
 }
 
 } // end of Gfx
