@@ -309,6 +309,7 @@ include("${colobot_SOURCE_DIR}/cmake/colobot-lint.cmake")
 # Below 2 are for PSVita
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+find_package(Intl REQUIRED)
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)

@@ -86,6 +86,24 @@ void gpu_free(SceUID uid)
 	sceKernelFreeMemBlock(uid);
 }
 
+void end_video()
+{
+	gpu_free(fb_memuid[0]);
+	gpu_free(fb_memuid[1]);
+	sceGxmTerminate();
+}
+
+void swap_buffers()
+{
+	sceDisplaySetFrameBuf(&fb[cur_fb], SCE_DISPLAY_SETBUF_NEXTFRAME);
+	cur_fb ^= 1;
+}
+
+void clear_screen()
+{
+	memset(fb[cur_fb].base, 0xFF, SCREEN_W*SCREEN_H*4);
+}
+
 int init_video()
 {
 	int ret;

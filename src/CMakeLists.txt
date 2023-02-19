@@ -499,6 +499,7 @@ target_link_libraries(colobotbase PUBLIC
     #Vita specific
     #SDL2::SDL2
     Threads::Threads
+    Gettext::Intl
 
     vitaGL
     vitashark
@@ -512,8 +513,6 @@ target_link_libraries(colobotbase PUBLIC
   kubridge_stub
   SceAppMgr_stub
   SceAppUtil_stub
-  SceAudio_stub
-  SceAudioIn_stub
   SceCtrl_stub
   SceCommonDialog_stub
   SceDisplay_stub
@@ -527,8 +526,10 @@ target_link_libraries(colobotbase PUBLIC
   SceKernelDmacMgr_stub
   SceGxm_stub
   SceShaccCg_stub
-  SceShaccCg_stub_weak
+  SceShaccCgExt
   SceSysmodule_stub
+  taihen_stub
+
   #SceSharedFb_stub
 )
 
@@ -558,7 +559,9 @@ if(OPENAL_SOUND)
         sound/oalsound/channel.h
         sound/oalsound/check.h
     )
-    target_link_libraries(colobotbase PUBLIC OpenAL::OpenAL)
+    target_link_libraries(colobotbase PUBLIC OpenAL::OpenAL
+    SceAudio_stub
+    )
 endif()
 
 if(WINGETOPT)
