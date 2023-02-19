@@ -29,10 +29,10 @@
 #include "math/intpoint.h"
 #include "math/vector.h"
 
-#include <glew/glew.h>
-
 #include <string>
 #include <memory>
+
+#include <vitaGL.h>
 
 struct SDL_Surface;
 

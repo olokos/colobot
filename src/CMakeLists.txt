@@ -147,14 +147,13 @@ add_library(colobotbase STATIC
     graphics/model/model_output.h
     graphics/model/model_shadow_spot.h
     graphics/model/model_triangle.h
-    graphics/opengl/gl14device.cpp
-    graphics/opengl/gl14device.h
     graphics/opengl/gl21device.cpp
     graphics/opengl/gl21device.h
     graphics/opengl/glframebuffer.cpp
     graphics/opengl/glframebuffer.h
     graphics/opengl/glutil.cpp
     graphics/opengl/glutil.h
+    graphics/opengl/vitaIncludes.h
     level/build_type.h
     level/level_category.cpp
     level/level_category.h
@@ -471,11 +470,6 @@ add_library(colobotbase STATIC
     ui/screen/screen_welcome.h
     ui/studio.cpp
     ui/studio.h
-    
-    glew/eglew.h
-    glew/glew.h
-    glew/glxew.h
-    glew/wglew.h
 )
 
 target_include_directories(colobotbase PUBLIC

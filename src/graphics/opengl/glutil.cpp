@@ -23,7 +23,6 @@
 #include "common/logger.h"
 #include "common/make_unique.h"
 
-#include "graphics/opengl/gl14device.h"
 #include "graphics/opengl/gl21device.h"
 
 #include <SDL.h>
@@ -32,6 +31,8 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+
+#include <vitaGL.h>
 
 // Graphics module namespace
 namespace Gfx
