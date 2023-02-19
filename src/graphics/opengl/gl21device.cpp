@@ -41,6 +41,9 @@
 #include <cmath>
 #include <cassert>
 
+#include <vitaGL.h>
+#include "vitaIncludes.h"
+
 
 // Graphics module namespace
 namespace Gfx
@@ -59,7 +62,7 @@ void CGL21Device::DebugHook()
 {
     /* This function is only called here, so it can be used
      * as a breakpoint when debugging using gDEBugger */
-    glColor3i(0, 0, 0);
+    glColor3f(0, 0, 0);
 }
 
 void CGL21Device::DebugLights()
@@ -146,10 +149,15 @@ void CGL21Device::DebugLights()
 
                 v[0].coord = l.position;
                 v[1].coord = l.position + Math::Normalize(l.direction) * 100.0f;
+                
+                /*
                 glEnable(GL_LINE_STIPPLE);
                 glLineStipple(3.0, 0xFF);
                 DrawPrimitive(PRIMITIVE_LINES, v, 2);
                 glDisable(GL_LINE_STIPPLE);
+
+                Disable line stippling on vita - we lose dotted lines here 
+                */
             }
         }
     }
@@ -200,7 +208,7 @@ bool CGL21Device::Create()
     GetLogger()->Info("%s\n", renderer);
 
     // Detect support of anisotropic filtering
-    m_capabilities.anisotropySupported = glewIsSupported("GL_EXT_texture_filter_anisotropic");
+    m_capabilities.anisotropySupported = true; // Assuming vita supports texture anisotropy filtering
     if (m_capabilities.anisotropySupported)
     {
         // Obtain maximum anisotropy level available
@@ -217,7 +225,7 @@ bool CGL21Device::Create()
     }
 
     // Read maximum sample count for MSAA
-    if(glewIsSupported("GL_EXT_framebuffer_multisample"))
+    if(SCE_GXM_MULTISAMPLE_4X) // Max vita multisample mode
     {
         m_capabilities.multisamplingSupported = true;
 
@@ -870,13 +878,13 @@ Texture CGL21Device::CreateDepthTexture(int width, int height, int depth)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 
-    float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    int color[] = { 1, 1, 1, 1 };
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
+    glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
 
     glBindTexture(GL_TEXTURE_2D, m_currentTextures[0].id);
 
