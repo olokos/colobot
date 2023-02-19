@@ -5,7 +5,7 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-project(colobot C CXX)
+project(colobot.elf C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
@@ -252,7 +252,7 @@ option(TESTS "Build tests" OFF)
 option(TOOLS "Build tool programs" OFF)
 
 # Generate desktop files, manpage, etc.
-option(DESKTOP "Generate desktop files, manpages, etc" ON)
+option(DESKTOP "Generate desktop files, manpages, etc" OFF)
 
 # Doxygen docs are optional for installation
 option(INSTALL_DOCS "Install Doxygen-generated documentation" OFF)

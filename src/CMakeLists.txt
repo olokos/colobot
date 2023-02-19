@@ -494,6 +494,12 @@ target_link_libraries(colobotbase PUBLIC
     Boost::filesystem
     Boost::regex
     PhysFS::PhysFS
+    FLAC
+    ogg
+    vorbis
+    vorbisenc
+    m
+
     SndFile::sndfile
 
     #Vita specific
@@ -627,7 +633,33 @@ elseif(PLATFORM_MACOSX)
 elseif(PLATFORM_FREEBSD)
     find_package(Intl REQUIRED)
     target_link_libraries(colobotbase PUBLIC Gettext::Intl)
+elseif(PLATFORM_OTHER) # PLATFORM - VITA
+
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+  if(DEFINED ENV{VITASDK})
+    set(CMAKE_TOOLCHAIN_FILE "$ENV{VITASDK}/share/vita.toolchain.cmake" CACHE PATH "toolchain file")
+  else()
+    message(FATAL_ERROR "Please define VITASDK to point to your SDK path!")
+  endif()
 endif()
+
+#SET(PROJECT_NAME colobotbase)
+SET(VITA_APP_NAME "Colobot Gold - Vita")
+SET(VITA_TITLEID "COLO30777")
+SET(VITA_VERSION 00.21)
+
+include("${VITASDK}/share/vita.cmake" REQUIRED)
+    vita_create_self(${PROJECT_NAME}.self ../${PROJECT_NAME})
+    vita_create_vpk(${PROJECT_NAME}.vpk ${VITA_TITLEID} ${PROJECT_NAME}.self
+      VERSION ${VITA_VERSION}
+      NAME ${VITA_APP_NAME}
+      FILE sce_sys/icon0.png sce_sys/icon0.png
+      FILE sce_sys/livearea/contents/bg.png sce_sys/livearea/contents/bg.png
+      FILE sce_sys/livearea/contents/startup.png sce_sys/livearea/contents/startup.png
+      FILE sce_sys/livearea/contents/template.xml sce_sys/livearea/contents/template.xml
+    )
+
+    endif()
 
 
 set(COLOBOT_LIBS ${LIBS} PARENT_SCOPE)
@@ -637,16 +669,16 @@ set(COLOBOT_LIBS ${LIBS} PARENT_SCOPE)
 if(HIDE_CONSOLE)
     add_executable(colobot WIN32 app/main.cpp)
 else()
-    add_executable(colobot app/main.cpp)
+    add_executable(colobot.elf app/main.cpp)
 endif()
 
 if(PLATFORM_WINDOWS)
     target_sources(colobot PRIVATE ../desktop/colobot.rc)
 endif()
-target_link_libraries(colobot colobotbase SDL2::SDL2main)
+target_link_libraries(colobot.elf colobotbase SDL2::SDL2main)
 
 # Install
-install(TARGETS colobot RUNTIME DESTINATION ${COLOBOT_INSTALL_BIN_DIR})
+install(TARGETS colobot.elf RUNTIME DESTINATION ${COLOBOT_INSTALL_BIN_DIR})
 if(MSVC)
     install(FILES $<TARGET_PDB_FILE:colobot> CONFIGURATIONS Debug RelWithDebInfo DESTINATION ${COLOBOT_INSTALL_BIN_DIR} OPTIONAL)
 endif()
