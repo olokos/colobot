@@ -49,6 +49,9 @@ const char* stringsCbot[CBot::CBotErrMAX]         = { nullptr };
  */
 #define TR(x) x
 
+// Use intl_gettext instead of gettext from vitasdk
+#define _INTL_REDIRECT_MACROS
+
 /* Please run `cmake --build <path_to_build_folder> --target update-pot`
  * after changing this file in order to update translation files. Thank you.
  */

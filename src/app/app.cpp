@@ -1938,7 +1938,7 @@ void CApplication::SetLanguage(Language language)
     std::string langStr = "LANGUAGE=";
     langStr += locale;
     strcpy(m_languageLocale, langStr.c_str());
-    putenv(m_languageLocale);
+    getenv(m_languageLocale); /* VITA TODO FIXME This was putenv, hack-workaround is to set it to getenv for vita, but it will get value instead of set value as a consequence, which is a bug!*/
     GetLogger()->Trace("SetLanguage: Set LANGUAGE=%s in environment\n", locale.c_str());
 
     char* defaultLocale = setlocale(LC_ALL, ""); // Load system locale
