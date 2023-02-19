@@ -154,6 +154,8 @@ add_library(colobotbase STATIC
     graphics/opengl/glutil.cpp
     graphics/opengl/glutil.h
     graphics/opengl/vitaIncludes.h
+    graphics/opengl/vitautils.h
+    graphics/opengl/vitadraw.h
     level/build_type.h
     level/level_category.cpp
     level/level_category.h

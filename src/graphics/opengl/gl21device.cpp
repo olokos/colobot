@@ -44,6 +44,123 @@
 #include <vitaGL.h>
 #include "vitaIncludes.h"
 
+#include <psp2/display.h>
+//#include <psp2/gxm.h>
+#include <psp2/kernel/sysmem.h>
+#include "vitadraw.h"
+#include "vitautils.h"
+
+
+static SceDisplayFrameBuf fb[2];
+static SceUID fb_memuid[2];
+static int cur_fb = 0;
+
+
+void *gpu_alloc(SceKernelMemBlockType type, unsigned int size, unsigned int attribs, SceUID *uid)
+{
+	void *mem;
+
+	if (type == SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RW) {
+		size = align_mem(size, 256*1024);
+	} else {
+		size = align_mem(size, 4*1024);
+	}
+
+	*uid = sceKernelAllocMemBlock("gpu_mem", type, size, NULL);
+
+	if (sceKernelGetMemBlockBase(*uid, &mem) < 0)
+		return NULL;
+
+	if (sceGxmMapMemory(mem, size, (SceGxmMemoryAttribFlags) attribs) < 0)
+		return NULL;
+
+	return mem;
+}
+
+void gpu_free(SceUID uid)
+{
+	void *mem = NULL;
+	if (sceKernelGetMemBlockBase(uid, &mem) < 0)
+		return;
+	sceGxmUnmapMemory(mem);
+	sceKernelFreeMemBlock(uid);
+}
+
+int init_video()
+{
+	int ret;
+
+	SceGxmInitializeParams params;
+
+	params.flags                        = 0x0;
+	params.displayQueueMaxPendingCount  = 0x2; //Double buffering
+	params.displayQueueCallback         = 0x0;
+	params.displayQueueCallbackDataSize = 0x0;
+	params.parameterBufferSize          = (16 * 1024 * 1024);
+
+	/* Initialize the GXM */
+	ret = sceGxmInitialize(&params);
+	printf("sceGxmInitialize(): 0x%08X\n", ret);
+
+	/* Setup framebuffers */
+	fb[0].size        = sizeof(fb[0]);
+	fb[0].pitch       = SCREEN_W;
+	fb[0].pixelformat = SCE_DISPLAY_PIXELFORMAT_A8B8G8R8;
+	fb[0].width       = SCREEN_W;
+	fb[0].height      = SCREEN_H;
+
+	fb[1].size        = sizeof(fb[1]);
+	fb[1].pitch       = SCREEN_W;
+	fb[1].pixelformat = SCE_DISPLAY_PIXELFORMAT_A8B8G8R8;
+	fb[1].width       = SCREEN_W;
+	fb[1].height      = SCREEN_H;
+
+	/* Allocate memory for the framebuffers */
+	fb[0].base = gpu_alloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RW,
+		SCREEN_W * SCREEN_H * 4, SCE_GXM_MEMORY_ATTRIB_RW, &fb_memuid[0]);
+
+	if (fb[0].base == NULL) {
+		printf("Could not allocate memory for fb[0]. %p", fb[0].base);
+		return -1;
+	}
+
+	fb[1].base = gpu_alloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RW,
+		SCREEN_W * SCREEN_H * 4, SCE_GXM_MEMORY_ATTRIB_RW, &fb_memuid[1]);
+
+	if (fb[1].base == NULL) {
+		printf("Could not allocate memory for fb[1]. %p", fb[1].base);
+		return -2;
+	}
+
+	/* Display the framebuffer 0 */
+	cur_fb = 0;
+	swap_buffers();
+
+	printf(
+		"\nframebuffer 0:\n"
+		"\tsize:           0x%08X\n"
+		"\tbase:           0x%08X\n"
+		"\tpitch:          0x%08X\n"
+		"\tpixelformat:    0x%08X\n"
+		"\twidth:          0x%08X\n"
+		"\theight          0x%08X\n",
+		fb[0].size, (uintptr_t)fb[0].base,
+		fb[0].pitch, fb[0].pixelformat, fb[0].width, fb[0].height);
+
+	printf(
+		"\nframebuffer 1:\n"
+		"\tsize:           0x%08X\n"
+		"\tbase:           0x%08X\n"
+		"\tpitch:          0x%08X\n"
+		"\tpixelformat:    0x%08X\n"
+		"\twidth:          0x%08X\n"
+		"\theight          0x%08X\n",
+		fb[1].size, (uintptr_t)fb[1].base,
+		fb[1].pitch, fb[1].pixelformat, fb[1].width, fb[1].height);
+    return ret;
+}
+
+
 
 // Graphics module namespace
 namespace Gfx
@@ -180,7 +297,8 @@ bool CGL21Device::Create()
 {
     GetLogger()->Info("Creating CDevice - OpenGL 2.1\n");
 
-    if (!InitializeGLEW())
+
+    if (init_video() < 0)
     {
         m_errorMessage = "An error occurred while initializing GLEW.";
         return false;
