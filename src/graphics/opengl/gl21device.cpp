@@ -35,7 +35,7 @@
 #include "math/geometry.h"
 
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <physfs.h>
 
 #include <cmath>
@@ -225,7 +225,7 @@ bool CGL21Device::Create()
     }
 
     // Read maximum sample count for MSAA
-    if(SCE_GXM_MULTISAMPLE_4X) // Max vita multisample mode
+    if(true) // Vita does support MSAA
     {
         m_capabilities.multisamplingSupported = true;
 
@@ -1231,7 +1231,11 @@ void CGL21Device::DrawPrimitives(PrimitiveType type, const Vertex *vertices,
     SetVertexAttributes(vertices);
     glColor4fv(color.Array());
 
-    glMultiDrawArrays(TranslateGfxPrimitive(type), first, count, drawCount);
+    for (int i = 0; i < drawCount; i++)
+    {
+        // Vita - This might have to be decremented, not incremented!
+        glDrawArrays(TranslateGfxPrimitive(type), first[i], count[i]);
+    }
 }
 
 void CGL21Device::DrawPrimitives(PrimitiveType type, const VertexTex2 *vertices,
@@ -1243,7 +1247,11 @@ void CGL21Device::DrawPrimitives(PrimitiveType type, const VertexTex2 *vertices,
     SetVertexAttributes(vertices);
     glColor4fv(color.Array());
 
-    glMultiDrawArrays(TranslateGfxPrimitive(type), first, count, drawCount);
+    for (int i = 0; i < drawCount; i++)
+    {
+        // Vita - This might have to be decremented, not incremented!
+        glDrawArrays(TranslateGfxPrimitive(type), first[i], count[i]);
+    }
 }
 
 void CGL21Device::DrawPrimitives(PrimitiveType type, const VertexCol *vertices,
@@ -1254,7 +1262,11 @@ void CGL21Device::DrawPrimitives(PrimitiveType type, const VertexCol *vertices,
     BindVBO(0);
     SetVertexAttributes(vertices);
 
-    glMultiDrawArrays(TranslateGfxPrimitive(type), first, count, drawCount);
+    for (int i = 0; i < drawCount; i++)
+    {
+        // Vita - This might have to be decremented, not incremented!
+        glDrawArrays(TranslateGfxPrimitive(type), first[i], count[i]);
+    }
 }
 
 
