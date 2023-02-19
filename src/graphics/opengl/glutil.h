@@ -29,7 +29,7 @@
 #include "math/intpoint.h"
 #include "math/vector.h"
 
-#include <GL/glew.h>
+#include <glew/glew.h>
 
 #include <string>
 #include <memory>
