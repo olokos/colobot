@@ -524,7 +524,7 @@ GLint LinkProgram(int count, GLint shaders[])
     glLinkProgram(program);
 
     for (int i = 0; i < count; i++)
-        glDetachShader(program, shaders[i]);
+        glDeleteShader(shaders[i]);
 
     GLint status;
     glGetProgramiv(program, GL_LINK_STATUS, &status);

@@ -141,7 +141,7 @@
 
 #define GL_DOUBLE 0x140A
 
-void glDetachShader(GLuint program, GLuint shader);
+// Not supported or maybe not even needed for vita void glDetachShader(GLuint program, GLuint shader);
 
 #define GL_COMPARE_R_TO_TEXTURE_ARB 0x884E
 #define GL_COMPARE_REF_TO_TEXTURE GL_COMPARE_R_TO_TEXTURE_ARB
