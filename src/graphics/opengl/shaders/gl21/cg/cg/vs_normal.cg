@@ -1,0 +1,59 @@
+// profile sce_vp_psp2
+
+/*
+ * This file is part of the Colobot: Gold Edition source code
+ * Copyright (C) 2001-2014, Daniel Roux, EPSITEC SA & TerranovaTeam
+ * http://epsitec.ch; http://colobot.info; http://github.com/colobot
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://gnu.org/licenses
+ */
+
+// VERTEX SHADER - NORMAL MODE
+
+uniform float4x4 uni_ProjectionMatrix;
+uniform float4x4 uni_ViewMatrix;
+uniform float4x4 uni_ModelMatrix;
+uniform float4x4 uni_ShadowMatrix;
+uniform float4x4 uni_NormalMatrix;
+uniform float3 uni_CameraPosition;
+
+void main(
+    float3 out pass_CameraDirection : TEXCOORD3,
+    float out pass_Distance : TEXCOORD5,
+    float4 out pass_Color : COLOR,
+    float3 out pass_Normal : TEXCOORD4,
+    float2 out pass_TexCoord0 : TEXCOORD0,
+    float2 out pass_TexCoord1 : TEXCOORD1,
+    float3 out pass_TexCoord2 : TEXCOORD2,
+    float4 out gl_Position : HPOS,
+    float4 in gl_Vertex : POSITION,
+    float4 in gl_MultiTexCoord0 : TEXCOORD0,
+    float4 in gl_MultiTexCoord1 : TEXCOORD1,
+    float4 in gl_Color : COLOR,
+    float3 in gl_Normal : NORMAL
+) {
+    float4 position = mul(gl_Vertex, uni_ModelMatrix);
+    float4 eyeSpace = mul(position, uni_ViewMatrix);
+    float4 shadowCoord = mul(position, uni_ShadowMatrix);
+
+    gl_Position = mul(eyeSpace, uni_ProjectionMatrix);
+
+    pass_CameraDirection = uni_CameraPosition - position.xyz;
+    pass_Color = gl_Color;
+    pass_Normal = normalize((mul(float4(gl_Normal, 0.0f), uni_NormalMatrix)).xyz);
+    pass_Distance = abs(eyeSpace.z / eyeSpace.w);
+    pass_TexCoord0 = gl_MultiTexCoord0.xy;
+    pass_TexCoord1 = gl_MultiTexCoord1.xy;
+    pass_TexCoord2 = shadowCoord.xyz / shadowCoord.w;
+}
