@@ -81,6 +81,8 @@ std::unique_ptr<CDevice> CreateDevice(const DeviceConfig &config, const std::str
     //if      (name == "default") return MakeUnique<CGL14Device>(config);
     //else if (name == "opengl")  return MakeUnique<CGL14Device>(config);
     //else if (name == "gl14")    return MakeUnique<CGL14Device>(config);
+    
+    /* OpenGL Detection for some reason doesnt work right on Vita, so just harcode used OpenGL device instead
     if (name == "gl21")    return MakeUnique<CGL21Device>(config);
     else if (name == "auto")
     {
@@ -91,6 +93,8 @@ std::unique_ptr<CDevice> CreateDevice(const DeviceConfig &config, const std::str
     }
 
     return nullptr;
+    */
+   return MakeUnique<CGL21Device>(config); // On Vita we want to use the 2.1 device regardless of what OpenGL is returned
 }
 
 int GetOpenGLVersion()
@@ -102,11 +106,15 @@ int GetOpenGLVersion()
 
 int GetOpenGLVersion(int &major, int &minor)
 {
+    /* Not needed for Vita, we always have 2.0 ES and below function crashes with "Data abort exception"
     const char* version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
 
     sscanf(version, "%d.%d", &major, &minor);
-
+    
     return 10 * major + minor;
+    */
+
+    return 210;
 }
 
 bool AreExtensionsSupported(std::string list)
