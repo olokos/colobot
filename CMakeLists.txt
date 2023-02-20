@@ -237,7 +237,7 @@ option(OFFICIAL_COLOBOT_BUILD "Official build (changes crash screen text)" OFF)
 option(HIDE_CONSOLE "Hide console" OFF)
 
 # Hardcode relative paths instead of absolute paths
-option(USE_RELATIVE_PATHS "Generate relative paths from absolute paths" OFF)
+option(USE_RELATIVE_PATHS "Generate relative paths from absolute paths" ON)
 
 # Portable build - load all data from the base directory
 option(PORTABLE "Portable build" ON)
