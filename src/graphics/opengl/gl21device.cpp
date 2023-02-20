@@ -308,7 +308,7 @@ bool CGL21Device::Create()
     GLint shaders[2];
     char filename[128];
 
-    strcpy(filename, "shaders/gl21/vs_normal.glsl");
+    strcpy(filename, "shaders/gl21/cg/vs_normal.cg");
     shaders[0] = LoadShader(GL_VERTEX_SHADER, filename);
     if (shaders[0] == 0)
     {
@@ -317,7 +317,7 @@ bool CGL21Device::Create()
         return false;
     }
 
-    strcpy(filename, "shaders/gl21/fs_normal.glsl");
+    strcpy(filename, "shaders/gl21/cg/fs_normal.cg");
     shaders[1] = LoadShader(GL_FRAGMENT_SHADER, filename);
     if (shaders[1] == 0)
     {
@@ -338,7 +338,7 @@ bool CGL21Device::Create()
     glDeleteShader(shaders[1]);
 
     // Create shader program for interface rendering
-    strcpy(filename, "shaders/gl21/vs_interface.glsl");
+    strcpy(filename, "shaders/gl21/cg/vs_interface.cg");
     shaders[0] = LoadShader(GL_VERTEX_SHADER, filename);
     if (shaders[0] == 0)
     {
@@ -347,7 +347,7 @@ bool CGL21Device::Create()
         return false;
     }
 
-    strcpy(filename, "shaders/gl21/fs_interface.glsl");
+    strcpy(filename, "shaders/gl21/cg/fs_interface.cg");
     shaders[1] = LoadShader(GL_FRAGMENT_SHADER, filename);
     if (shaders[1] == 0)
     {
@@ -368,7 +368,7 @@ bool CGL21Device::Create()
     glDeleteShader(shaders[1]);
 
     // Create shader program for shadow rendering
-    strcpy(filename, "shaders/gl21/vs_shadow.glsl");
+    strcpy(filename, "shaders/gl21/cg/vs_shadow.cg");
     shaders[0] = LoadShader(GL_VERTEX_SHADER, filename);
     if (shaders[0] == 0)
     {
@@ -377,7 +377,7 @@ bool CGL21Device::Create()
         return false;
     }
 
-    strcpy(filename, "shaders/gl21/fs_shadow.glsl");
+    strcpy(filename, "shaders/gl21/cg/fs_shadow.cg");
     shaders[1] = LoadShader(GL_FRAGMENT_SHADER, filename);
     if (shaders[1] == 0)
     {
