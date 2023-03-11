@@ -5,7 +5,7 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-project(colobot C CXX)
+project(colobot.elf C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
@@ -237,13 +237,13 @@ option(OFFICIAL_COLOBOT_BUILD "Official build (changes crash screen text)" OFF)
 option(HIDE_CONSOLE "Hide console" OFF)
 
 # Hardcode relative paths instead of absolute paths
-option(USE_RELATIVE_PATHS "Generate relative paths from absolute paths" OFF)
+option(USE_RELATIVE_PATHS "Generate relative paths from absolute paths" ON)
 
 # Portable build - load all data from the base directory
-option(PORTABLE "Portable build" OFF)
+option(PORTABLE "Portable build" ON)
 
 # Portable saves - suitable for e.g. putting the whole game on external storage and moving your saves with it
-option(PORTABLE_SAVES "Portable saves" OFF)
+option(PORTABLE_SAVES "Portable saves" ON)
 
 # Building tests can be enabled/disabled
 option(TESTS "Build tests" OFF)
@@ -252,31 +252,31 @@ option(TESTS "Build tests" OFF)
 option(TOOLS "Build tool programs" OFF)
 
 # Generate desktop files, manpage, etc.
-option(DESKTOP "Generate desktop files, manpages, etc" ON)
+option(DESKTOP "Generate desktop files, manpages, etc" OFF)
 
 # Doxygen docs are optional for installation
 option(INSTALL_DOCS "Install Doxygen-generated documentation" OFF)
 
 # Build OpenAL sound support
-option(OPENAL_SOUND "Build OpenAL sound support" ON)
+option(OPENAL_SOUND "Build OpenAL sound support" OFF)
 
 # Link runtime library statically (currently only works for MSVC)
-option(USE_STATIC_RUNTIME "Link the runtime library statically" OFF)
+option(USE_STATIC_RUNTIME "Link the runtime library statically" ON)
 
 # CBot can also be a static library
-option(CBOT_STATIC "Build CBot as static libary" OFF)
+option(CBOT_STATIC "Build CBot as static libary" ON)
 
 # This is useful in case you want to use static boost libraries
-option(BOOST_STATIC "Link with static boost libraries" OFF)
+option(BOOST_STATIC "Link with static boost libraries" ON)
 
 # This is useful on Windows, if linking against standard GLEW dll fails
-option(GLEW_STATIC "Link statically with GLEW" OFF)
+option(GLEW_STATIC "Link statically with GLEW" ON)
 
 # Link statically with LibSndFile
-option(SNDFILE_STATIC "Link statically with LibSndFile" OFF)
+option(SNDFILE_STATIC "Link statically with LibSndFile" ON)
 
 # Sometimes helpful if there is a different version of gtest installed on system vs bundled
-option(FORCE_BUNDLED_GTEST "Force the use of bundled gtest" OFF)
+option(FORCE_BUNDLED_GTEST "Force the use of bundled gtest" ON)
 
 # This is for use with colobot-lint tool
 option(COLOBOT_LINT_BUILD "Generate some additional CMake targets for use with colobot-lint" OFF)
@@ -295,21 +295,25 @@ endif()
 ##
 # Additional settings for MSYS
 ##
-include("${colobot_SOURCE_DIR}/cmake/msys.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/msys.cmake")
 
 ##
 # Additional functions for colobot-lint
 ##
-include("${colobot_SOURCE_DIR}/cmake/colobot-lint.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/colobot-lint.cmake")
 
 ##
 # Searching for packages
 ##
 
-find_package(OpenGL 1.4 REQUIRED)
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+find_package(Intl REQUIRED)
+
+# find_package(OpenGL 1.4 REQUIRED)
 find_package(SDL2_ttf REQUIRED)
+find_package(SDL2_image REQUIRED)
+find_package(SDL2 REQUIRED)
 find_package(PNG 1.2 REQUIRED)
 find_package(Gettext REQUIRED)
 find_package(PhysFS REQUIRED)
@@ -321,8 +325,8 @@ set(Boost_USE_STATIC_RUNTIME ${USE_STATIC_RUNTIME})
 set(Boost_ADDITIONALVERSION "1.51" "1.51.0")
 find_package(Boost COMPONENTS system filesystem regex REQUIRED)
 
-set(GLEW_USE_STATIC_LIBS ${GLEW_STATIC})
-find_package(GLEW REQUIRED)
+# set(GLEW_USE_STATIC_LIBS ${GLEW_STATIC})
+# find_package(GLEW REQUIRED)
 
 if (OPENAL_SOUND)
     find_package(OpenAL REQUIRED)

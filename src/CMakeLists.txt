@@ -1,7 +1,11 @@
+# Compiler Flags for PSVita (below line and std c++11)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wl,-q -O2 -ffast-math -mtune=cortex-a9 -mfpu=neon -ftree-vectorize -Wno-deprecated-declarations")
+
+
 # Compile flags as defined in global CMakeLists
-set(CMAKE_CXX_FLAGS ${COLOBOT_CXX_FLAGS})
-set(CMAKE_CXX_FLAGS_RELEASE ${COLOBOT_CXX_FLAGS_RELEASE})
-set(CMAKE_CXX_FLAGS_DEBUG ${COLOBOT_CXX_FLAGS_DEBUG})
+set(CMAKE_CXX_FLAGS "${COLOBOT_CXX_FLAGS} ${CMAKE_C_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS_RELEASE "${COLOBOT_CXX_FLAGS_RELEASE} ${CMAKE_C_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS_DEBUG "${COLOBOT_CXX_FLAGS_DEBUG} ${CMAKE_C_FLAGS} -std=c++11")
 
 # Subdirectories
 add_subdirectory(CBot)
@@ -142,8 +146,6 @@ add_library(colobotbase STATIC
     graphics/model/model_output.h
     graphics/model/model_shadow_spot.h
     graphics/model/model_triangle.h
-    graphics/opengl/gl14device.cpp
-    graphics/opengl/gl14device.h
     graphics/opengl/gl21device.cpp
     graphics/opengl/gl21device.h
     graphics/opengl/gl33device.cpp
@@ -470,6 +472,8 @@ add_library(colobotbase STATIC
     ui/studio.h
 )
 
+target_compile_definitions(colobotbase PRIVATE __psp2__)
+
 target_include_directories(colobotbase PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/..
@@ -480,17 +484,33 @@ target_include_directories(colobotbase PUBLIC
 target_link_libraries(colobotbase PUBLIC
     CBot
     localename
-    SDL2::Core
-    SDL2::Image
-    SDL2::TTF
-    OpenGL::GL
-    PNG::PNG
-    GLEW::GLEW
     Boost::headers
     Boost::filesystem
     Boost::regex
     PhysFS::PhysFS
+    #OpenGL::GL
+    PNG::PNG
+    #GLEW::GLEW
     SndFile::sndfile
+
+    libGL_stub_weak
+    SDL2::TTF
+    SDL2::Image
+    SDL2::SDL2-static
+
+
+    Threads::Threads
+    Gettext::Intl
+    jpeg
+    png
+    freetype
+    webp
+
+    libgpu_es4_ext_stub_weak
+    libIMGEGL_stub_weak
+    libGLESv2_stub_weak
+
+    SceIme_stub
 )
 
 if(mpg123_FOUND)
@@ -585,6 +605,41 @@ elseif(PLATFORM_MACOSX)
 elseif(PLATFORM_FREEBSD)
     find_package(Intl REQUIRED)
     target_link_libraries(colobotbase PUBLIC Gettext::Intl)
+
+elseif(PLATFORM_OTHER) # PLATFORM - VITA
+
+    if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+        if(DEFINED ENV{VITASDK})
+            set(CMAKE_TOOLCHAIN_FILE "$ENV{VITASDK}/share/vita.toolchain.cmake" CACHE PATH "toolchain file")
+        else()
+            message(FATAL_ERROR "Please define VITASDK to point to your SDK path!")
+        endif()
+    endif()
+
+    #SET(PROJECT_NAME colobotbase)
+    SET(VITA_APP_NAME "Colobot Gold - Vita")
+    SET(VITA_TITLEID "COLO30777")
+    SET(VITA_VERSION 00.25)
+
+    include("${VITASDK}/share/vita.cmake" REQUIRED)
+
+    vita_create_self(${PROJECT_NAME}.self ../${PROJECT_NAME}  UNSAFE NOASLR)
+    
+    vita_create_vpk(${PROJECT_NAME}.vpk ${VITA_TITLEID} ${PROJECT_NAME}.self
+    VERSION ${VITA_VERSION}
+    NAME ${VITA_APP_NAME}
+    FILE sce_sys/icon0.png sce_sys/icon0.png
+    FILE sce_sys/livearea/contents/bg.png sce_sys/livearea/contents/bg.png
+    FILE sce_sys/livearea/contents/startup.png sce_sys/livearea/contents/startup.png
+    FILE sce_sys/livearea/contents/template.xml sce_sys/livearea/contents/template.xml
+
+    FILE graphics/opengl/vita-modules/libGL.suprx module/libGL.suprx
+    FILE graphics/opengl/vita-modules/libGLESv2.suprx module/libGLESv2.suprx
+    FILE graphics/opengl/vita-modules/libgpu_es4_ext.suprx module/libgpu_es4_ext.suprx
+    FILE graphics/opengl/vita-modules/libIMGEGL.suprx module/libIMGEGL.suprx
+    FILE graphics/opengl/vita-modules/libpvrPSP2_WSEGL.suprx module/libpvrPSP2_WSEGL.suprx
+    )
+
 endif()
 
 
@@ -593,27 +648,27 @@ set(COLOBOT_LIBS ${LIBS} PARENT_SCOPE)
 
 # Targets
 if(HIDE_CONSOLE)
-    add_executable(colobot WIN32 app/main.cpp)
+    add_executable(colobot.elf WIN32 app/main.cpp)
 else()
-    add_executable(colobot app/main.cpp)
+    add_executable(colobot.elf app/main.cpp)
 endif()
 
 if(PLATFORM_WINDOWS)
-    target_sources(colobot PRIVATE ../desktop/colobot.rc)
+    target_sources(colobot.elf PRIVATE ../desktop/colobot.rc)
 endif()
-target_link_libraries(colobot colobotbase SDL2::Main)
+target_link_libraries(colobot.elf colobotbase SDL2::SDL2-static)
 
 # Install
-install(TARGETS colobot RUNTIME DESTINATION ${COLOBOT_INSTALL_BIN_DIR})
+install(TARGETS colobot.elf RUNTIME DESTINATION ${COLOBOT_INSTALL_BIN_DIR})
 if(MSVC)
-    install(FILES $<TARGET_PDB_FILE:colobot> CONFIGURATIONS Debug RelWithDebInfo DESTINATION ${COLOBOT_INSTALL_BIN_DIR} OPTIONAL)
+    install(FILES $<TARGET_PDB_FILE:colobot.elf> CONFIGURATIONS Debug RelWithDebInfo DESTINATION ${COLOBOT_INSTALL_BIN_DIR} OPTIONAL)
 endif()
 if(NOT CBOT_STATIC)
-    set_target_properties(colobot PROPERTIES INSTALL_RPATH ${COLOBOT_INSTALL_LIB_DIR})
+    set_target_properties(colobot.elf PROPERTIES INSTALL_RPATH ${COLOBOT_INSTALL_LIB_DIR})
 endif()
 
 # Linter-specific
 if(COLOBOT_LINT_BUILD)
     add_fake_header_sources("src" colobotbase)
-    add_fake_header_sources("src" colobot)
+    add_fake_header_sources("src" colobot.elf)
 endif()
