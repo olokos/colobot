@@ -44,7 +44,7 @@ This module defines the following 'IMPORTED' target:
 
   SDL2::Image
     The SDL2_image library, if found.
-    Have SDL2::Core as a link dependency.
+    Have SDL2::SDL2-static as a link dependency.
 
 
 
@@ -217,6 +217,6 @@ if(SDL2_IMAGE_FOUND)
     set_target_properties(SDL2::Image PROPERTIES
                           IMPORTED_LOCATION "${SDL2_IMAGE_LIBRARY}"
                           INTERFACE_INCLUDE_DIRECTORIES "${SDL2_IMAGE_INCLUDE_DIR}"
-                          INTERFACE_LINK_LIBRARIES SDL2::Core)
+                          INTERFACE_LINK_LIBRARIES SDL2::SDL2-static)
   endif()
 endif()

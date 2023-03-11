@@ -44,7 +44,7 @@ This module defines the following 'IMPORTED' target:
 
   SDL2::TTF
     The SDL2_ttf library, if found.
-    Have SDL2::Core as a link dependency.
+    Have SDL2::SDL2-static as a link dependency.
 
 
 
@@ -170,6 +170,7 @@ find_library(SDL2_TTF_LIBRARY
   HINTS
     ENV SDL2TTFDIR
     ENV SDL2DIR
+    /usr/local/lib/cmake/SDL2_ttf
     ${SDL2_TTF_NO_DEFAULT_PATH_CMD}
   PATH_SUFFIXES lib ${VC_LIB_PATH_SUFFIX}
   PATHS ${SDL2_TTF_PATH}
@@ -217,6 +218,6 @@ if(SDL2_TTF_FOUND)
     set_target_properties(SDL2::TTF PROPERTIES
                           IMPORTED_LOCATION "${SDL2_TTF_LIBRARY}"
                           INTERFACE_INCLUDE_DIRECTORIES "${SDL2_TTF_INCLUDE_DIR}"
-                          INTERFACE_LINK_LIBRARIES SDL2::Core)
+                          INTERFACE_LINK_LIBRARIES SDL2::SDL2-static)
   endif()
 endif()
