@@ -29,7 +29,8 @@
 #include "math/intpoint.h"
 #include "math/vector.h"
 
-#include <GL/glew.h>
+// #include <GL/glew.h>
+#include <GL/gl.h>
 
 #include <string>
 #include <memory>
@@ -48,7 +49,7 @@ enum FramebufferSupport
     FBS_ARB,
 };
 
-bool InitializeGLEW();
+// bool InitializeGLEW();
 
 FramebufferSupport DetectFramebufferSupport();
 

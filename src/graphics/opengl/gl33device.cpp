@@ -171,11 +171,11 @@ bool CGL33Device::Create()
 {
     GetLogger()->Info("Creating CDevice - OpenGL 3.3\n");
 
-    if (!InitializeGLEW())
-    {
-        m_errorMessage = "An error occurred while initializing GLEW.";
-        return false;
-    }
+    // if (!InitializeGLEW())
+    // {
+    //     m_errorMessage = "An error occurred while initializing GLEW.";
+    //     return false;
+    // }
 
     // Extract OpenGL version
     int glMajor, glMinor;
