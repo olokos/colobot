@@ -298,278 +298,278 @@ void CGLFramebuffer::CopyToScreen(int fromX, int fromY, int fromWidth, int fromH
 }
 
 // CGLFramebufferEXT
-GLuint CGLFramebufferEXT::m_currentFBO = 0;
+// GLuint CGLFramebufferEXT::m_currentFBO = 0;
 
-CGLFramebufferEXT::CGLFramebufferEXT(const FramebufferParams& params)
-    : m_params(params)
-{
-    m_fbo = 0;
-    m_colorRenderbuffer = 0;
-    m_colorTexture = 0;
-    m_depthRenderbuffer = 0;
-    m_depthTexture = 0;
-    m_width = 0;
-    m_height = 0;
-    m_depth = 0;
-    m_samples = 0;
-}
+// CGLFramebufferEXT::CGLFramebufferEXT(const FramebufferParams& params)
+//     : m_params(params)
+// {
+//     m_fbo = 0;
+//     m_colorRenderbuffer = 0;
+//     m_colorTexture = 0;
+//     m_depthRenderbuffer = 0;
+//     m_depthTexture = 0;
+//     m_width = 0;
+//     m_height = 0;
+//     m_depth = 0;
+//     m_samples = 0;
+// }
 
-bool CGLFramebufferEXT::Create()
-{
-    if (m_fbo != 0) return false;
+// bool CGLFramebufferEXT::Create()
+// {
+//     if (m_fbo != 0) return false;
 
-    m_width = m_params.width;
-    m_height = m_params.height;
-    m_depth = m_params.depth;
-    m_samples = m_params.samples;
+//     m_width = m_params.width;
+//     m_height = m_params.height;
+//     m_depth = m_params.depth;
+//     m_samples = m_params.samples;
 
-    glGenFramebuffersEXT(1, &m_fbo);
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+//     glGenFramebuffersEXT(1, &m_fbo);
+//     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
 
-    // create color texture
-    if (m_params.colorAttachment == FramebufferParams::AttachmentType::Texture)
-    {
-        GLint previous;
-        glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous);
+//     // create color texture
+//     if (m_params.colorAttachment == FramebufferParams::AttachmentType::Texture)
+//     {
+//         GLint previous;
+//         glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous);
 
-        glGenTextures(1, &m_colorTexture);
-        glBindTexture(GL_TEXTURE_2D, m_colorTexture);
+//         glGenTextures(1, &m_colorTexture);
+//         glBindTexture(GL_TEXTURE_2D, m_colorTexture);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
-                m_params.width, m_params.height, 0,
-                GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+//         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
+//                 m_params.width, m_params.height, 0,
+//                 GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-        glBindTexture(GL_TEXTURE_2D, previous);
+//         glBindTexture(GL_TEXTURE_2D, previous);
 
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,
-                GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_colorTexture, 0);
-    }
-    // create color renderbuffer
-    else if (m_params.colorAttachment == FramebufferParams::AttachmentType::Renderbuffer)
-    {
-        glGenRenderbuffersEXT(1, &m_colorRenderbuffer);
-        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_colorRenderbuffer);
+//         glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,
+//                 GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_colorTexture, 0);
+//     }
+//     // create color renderbuffer
+//     else if (m_params.colorAttachment == FramebufferParams::AttachmentType::Renderbuffer)
+//     {
+//         glGenRenderbuffersEXT(1, &m_colorRenderbuffer);
+//         glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_colorRenderbuffer);
 
-        if (m_params.samples > 1)
-            glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT,
-                    m_params.samples, GL_RGBA8, m_params.width, m_params.height);
-        else
-            glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA8,
-                    m_params.width, m_params.height);
+//         if (m_params.samples > 1)
+//             glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT,
+//                     m_params.samples, GL_RGBA8, m_params.width, m_params.height);
+//         else
+//             glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA8,
+//                     m_params.width, m_params.height);
 
-        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
+//         glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
 
-        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
-                GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, m_colorRenderbuffer);
-    }
-    else
-    {
-        glDrawBuffer(GL_NONE);
-    }
+//         glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
+//                 GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, m_colorRenderbuffer);
+//     }
+//     else
+//     {
+//         glDrawBuffer(GL_NONE);
+//     }
 
-    GLuint depthFormat = 0;
+//     GLuint depthFormat = 0;
 
-    switch (m_params.depth)
-    {
-    case 16: depthFormat = GL_DEPTH_COMPONENT16; break;
-    case 24: depthFormat = GL_DEPTH_COMPONENT24; break;
-    case 32: depthFormat = GL_DEPTH_COMPONENT32; break;
-    default: depthFormat = GL_DEPTH_COMPONENT16; break;
-    }
+//     switch (m_params.depth)
+//     {
+//     case 16: depthFormat = GL_DEPTH_COMPONENT16; break;
+//     case 24: depthFormat = GL_DEPTH_COMPONENT24; break;
+//     case 32: depthFormat = GL_DEPTH_COMPONENT32; break;
+//     default: depthFormat = GL_DEPTH_COMPONENT16; break;
+//     }
 
-    // create depth texture
-    if (m_params.depthAttachment == FramebufferParams::AttachmentType::Texture)
-    {
-        GLint previous;
-        glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous);
+//     // create depth texture
+//     if (m_params.depthAttachment == FramebufferParams::AttachmentType::Texture)
+//     {
+//         GLint previous;
+//         glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous);
 
-        glGenTextures(1, &m_depthTexture);
-        glBindTexture(GL_TEXTURE_2D, m_depthTexture);
+//         glGenTextures(1, &m_depthTexture);
+//         glBindTexture(GL_TEXTURE_2D, m_depthTexture);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, depthFormat, m_params.width, m_params.height, 0,
-                GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
+//         glTexImage2D(GL_TEXTURE_2D, 0, depthFormat, m_params.width, m_params.height, 0,
+//                 GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 
-        float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//         float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
+//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+//         glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
 
-        glBindTexture(GL_TEXTURE_2D, previous);
+//         glBindTexture(GL_TEXTURE_2D, previous);
 
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,
-                GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_depthTexture, 0);
-    }
-    // create depth renderbuffer
-    else if (m_params.depthAttachment == FramebufferParams::AttachmentType::Renderbuffer)
-    {
-        glGenRenderbuffersEXT(1, &m_depthRenderbuffer);
-        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthRenderbuffer);
+//         glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,
+//                 GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_depthTexture, 0);
+//     }
+//     // create depth renderbuffer
+//     else if (m_params.depthAttachment == FramebufferParams::AttachmentType::Renderbuffer)
+//     {
+//         glGenRenderbuffersEXT(1, &m_depthRenderbuffer);
+//         glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthRenderbuffer);
 
-        if (m_params.samples > 1)
-            glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT,
-                    m_params.samples, depthFormat, m_params.width, m_params.height);
-        else
-            glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, depthFormat, m_params.width, m_params.height);
+//         if (m_params.samples > 1)
+//             glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT,
+//                     m_params.samples, depthFormat, m_params.width, m_params.height);
+//         else
+//             glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, depthFormat, m_params.width, m_params.height);
 
-        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
+//         glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
 
-        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
-                GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthRenderbuffer);
-    }
+//         glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
+//                 GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthRenderbuffer);
+//     }
 
-    GLuint result = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-    if (result != GL_FRAMEBUFFER_COMPLETE_EXT)
-    {
-        GetLogger()->Error("Framebuffer incomplete: ");
+//     GLuint result = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+//     if (result != GL_FRAMEBUFFER_COMPLETE_EXT)
+//     {
+//         GetLogger()->Error("Framebuffer incomplete: ");
 
-        switch (result)
-        {
-        case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
-            GetLogger()->Error("attachment point incomplete");
-            break;
-        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
-            GetLogger()->Error("missing attachment");
-            break;
-        case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-            GetLogger()->Error("incompatible attachment dimensions");
-            break;
-        case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
-            GetLogger()->Error("draw buffer has missing color attachments");
-            break;
-        case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
-            GetLogger()->Error("read buffer has missing color attachments");
-            break;
-        case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
-            GetLogger()->Error("unsupported attachment format");
-            break;
-        }
+//         switch (result)
+//         {
+//         case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
+//             GetLogger()->Error("attachment point incomplete");
+//             break;
+//         case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
+//             GetLogger()->Error("missing attachment");
+//             break;
+//         case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
+//             GetLogger()->Error("incompatible attachment dimensions");
+//             break;
+//         case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
+//             GetLogger()->Error("draw buffer has missing color attachments");
+//             break;
+//         case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
+//             GetLogger()->Error("read buffer has missing color attachments");
+//             break;
+//         case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
+//             GetLogger()->Error("unsupported attachment format");
+//             break;
+//         }
 
-        Destroy();
+//         Destroy();
 
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_currentFBO);
-        return false;
-    }
+//         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_currentFBO);
+//         return false;
+//     }
 
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_currentFBO);
-    return true;
-}
+//     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_currentFBO);
+//     return true;
+// }
 
-void CGLFramebufferEXT::Destroy()
-{
-    if (m_fbo == 0) return;
+// void CGLFramebufferEXT::Destroy()
+// {
+//     if (m_fbo == 0) return;
 
-    if (m_currentFBO == m_fbo)
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+//     if (m_currentFBO == m_fbo)
+//         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 
-    glDeleteFramebuffersEXT(1, &m_fbo);
-    m_fbo = 0;
+//     glDeleteFramebuffersEXT(1, &m_fbo);
+//     m_fbo = 0;
 
-    if (m_colorRenderbuffer != 0)
-    {
-        glDeleteRenderbuffersEXT(1, &m_colorRenderbuffer);
-        m_colorRenderbuffer = 0;
-    }
+//     if (m_colorRenderbuffer != 0)
+//     {
+//         glDeleteRenderbuffersEXT(1, &m_colorRenderbuffer);
+//         m_colorRenderbuffer = 0;
+//     }
 
-    if (m_colorTexture != 0)
-    {
-        glDeleteTextures(1, &m_colorTexture);
-        m_colorTexture = 0;
-    }
+//     if (m_colorTexture != 0)
+//     {
+//         glDeleteTextures(1, &m_colorTexture);
+//         m_colorTexture = 0;
+//     }
 
-    if (m_depthRenderbuffer != 0)
-    {
-        glDeleteRenderbuffersEXT(1, &m_depthRenderbuffer);
-        m_depthRenderbuffer = 0;
-    }
+//     if (m_depthRenderbuffer != 0)
+//     {
+//         glDeleteRenderbuffersEXT(1, &m_depthRenderbuffer);
+//         m_depthRenderbuffer = 0;
+//     }
 
-    if (m_depthTexture != 0)
-    {
-        glDeleteTextures(1, &m_depthTexture);
-        m_depthTexture = 0;
-    }
+//     if (m_depthTexture != 0)
+//     {
+//         glDeleteTextures(1, &m_depthTexture);
+//         m_depthTexture = 0;
+//     }
 
-    m_width = 0;
-    m_height = 0;
-    m_depth = 0;
-    m_samples = 0;
-}
+//     m_width = 0;
+//     m_height = 0;
+//     m_depth = 0;
+//     m_samples = 0;
+// }
 
-bool CGLFramebufferEXT::IsDefault()
-{
-    return false;
-}
+// bool CGLFramebufferEXT::IsDefault()
+// {
+//     return false;
+// }
 
-//! Returns width of buffers in this framebuffer
-int CGLFramebufferEXT::GetWidth()
-{
-    return m_width;
-}
+// //! Returns width of buffers in this framebuffer
+// int CGLFramebufferEXT::GetWidth()
+// {
+//     return m_width;
+// }
 
-//! Returns height of buffers in this framebuffer
-int CGLFramebufferEXT::GetHeight()
-{
-    return m_height;
-}
+// //! Returns height of buffers in this framebuffer
+// int CGLFramebufferEXT::GetHeight()
+// {
+//     return m_height;
+// }
 
-//! Returns depth size in bits
-int CGLFramebufferEXT::GetDepth()
-{
-    return m_depth;
-}
+// //! Returns depth size in bits
+// int CGLFramebufferEXT::GetDepth()
+// {
+//     return m_depth;
+// }
 
-//! Returns number of samples or 1 if multisampling is not supported
-int CGLFramebufferEXT::GetSamples()
-{
-    return m_samples;
-}
+// //! Returns number of samples or 1 if multisampling is not supported
+// int CGLFramebufferEXT::GetSamples()
+// {
+//     return m_samples;
+// }
 
-//! Returns texture that contains color buffer or 0 if not available
-int CGLFramebufferEXT::GetColorTexture()
-{
-    return m_colorTexture;
-}
+// //! Returns texture that contains color buffer or 0 if not available
+// int CGLFramebufferEXT::GetColorTexture()
+// {
+//     return m_colorTexture;
+// }
 
-//! Returns texture that contains depth buffer or 0 if not available
-int CGLFramebufferEXT::GetDepthTexture()
-{
-    return m_depthTexture;
-}
+// //! Returns texture that contains depth buffer or 0 if not available
+// int CGLFramebufferEXT::GetDepthTexture()
+// {
+//     return m_depthTexture;
+// }
 
-//! Binds this framebuffer to context
-void CGLFramebufferEXT::Bind()
-{
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-    m_currentFBO = m_fbo;
-}
+// //! Binds this framebuffer to context
+// void CGLFramebufferEXT::Bind()
+// {
+//     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+//     m_currentFBO = m_fbo;
+// }
 
-//! Unbinds this framebuffer from context
-void CGLFramebufferEXT::Unbind()
-{
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-    m_currentFBO = 0;
-}
+// //! Unbinds this framebuffer from context
+// void CGLFramebufferEXT::Unbind()
+// {
+//     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+//     m_currentFBO = 0;
+// }
 
-void CGLFramebufferEXT::CopyToScreen(int fromX, int fromY, int fromWidth, int fromHeight,
-        int toX, int toY, int toWidth, int toHeight)
-{
-    glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_fbo);
-    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, 0);
+// void CGLFramebufferEXT::CopyToScreen(int fromX, int fromY, int fromWidth, int fromHeight,
+//         int toX, int toY, int toWidth, int toHeight)
+// {
+//     glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_fbo);
+//     glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, 0);
 
-    glBlitFramebufferEXT(fromX, fromY, fromX + fromWidth, fromY + fromHeight,
-            toX, toY, toX + toWidth, toY + toHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+//     glBlitFramebufferEXT(fromX, fromY, fromX + fromWidth, fromY + fromHeight,
+//             toX, toY, toX + toWidth, toY + toHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_currentFBO);
-}
+//     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_currentFBO);
+// }
 
 } // end of Gfx

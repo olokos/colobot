@@ -83,47 +83,47 @@ public:
 * Provides the concrete implementation of extension framebuffers.
 * Can be used with EXT_framebuffer_object supported.
 */
-class CGLFramebufferEXT : public CFramebuffer
-{
-protected:
-    FramebufferParams m_params;
+// class CGLFramebufferEXT : public CFramebuffer
+// {
+// protected:
+//     FramebufferParams m_params;
 
-    int m_width, m_height, m_depth, m_samples;
+//     int m_width, m_height, m_depth, m_samples;
 
-    GLuint m_fbo;
-    GLuint m_colorRenderbuffer;
-    GLuint m_colorTexture;
-    GLuint m_depthRenderbuffer;
-    GLuint m_depthTexture;
+//     GLuint m_fbo;
+//     GLuint m_colorRenderbuffer;
+//     GLuint m_colorTexture;
+//     GLuint m_depthRenderbuffer;
+//     GLuint m_depthTexture;
 
-    static GLuint m_currentFBO;
+//     static GLuint m_currentFBO;
 
-public:
-    CGLFramebufferEXT(const FramebufferParams& params);
+// public:
+//     CGLFramebufferEXT(const FramebufferParams& params);
 
-    bool Create() override;
+//     bool Create() override;
 
-    void Destroy() override;
+//     void Destroy() override;
 
-    bool IsDefault() override;
+//     bool IsDefault() override;
 
-    int GetWidth() override;
+//     int GetWidth() override;
 
-    int GetHeight() override;
+//     int GetHeight() override;
 
-    int GetDepth() override;
+//     int GetDepth() override;
 
-    int GetSamples() override;
+//     int GetSamples() override;
 
-    int GetColorTexture() override;
+//     int GetColorTexture() override;
 
-    int GetDepthTexture() override;
+//     int GetDepthTexture() override;
 
-    void Bind() override;
+//     void Bind() override;
 
-    void Unbind() override;
+//     void Unbind() override;
 
-    void CopyToScreen(int fromX, int fromY, int fromWidth, int fromHeight, int toX, int toY, int toWidth, int toHeight) override;
-};
+//     void CopyToScreen(int fromX, int fromY, int fromWidth, int fromHeight, int toX, int toY, int toWidth, int toHeight) override;
+// };
 
 } // end of Gfx
