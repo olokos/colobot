@@ -172,11 +172,11 @@ bool CGL21Device::Create()
 {
     GetLogger()->Info("Creating CDevice - OpenGL 2.1\n");
 
-    if (!InitializeGLEW())
-    {
-        m_errorMessage = "An error occurred while initializing GLEW.";
-        return false;
-    }
+    // if (!InitializeGLEW())
+    // {
+    //     m_errorMessage = "An error occurred while initializing GLEW.";
+    //     return false;
+    // }
 
     // Extract OpenGL version
     int glMajor, glMinor;
@@ -200,7 +200,7 @@ bool CGL21Device::Create()
     GetLogger()->Info("%s\n", renderer);
 
     // Detect support of anisotropic filtering
-    m_capabilities.anisotropySupported = glewIsSupported("GL_EXT_texture_filter_anisotropic");
+    m_capabilities.anisotropySupported = GL_EXT_texture_filter_anisotropic;
     if (m_capabilities.anisotropySupported)
     {
         // Obtain maximum anisotropy level available
@@ -217,7 +217,7 @@ bool CGL21Device::Create()
     }
 
     // Read maximum sample count for MSAA
-    if(glewIsSupported("GL_EXT_framebuffer_multisample"))
+    if(GL_EXT_framebuffer_multisample)
     {
         m_capabilities.multisamplingSupported = true;
 
@@ -1596,8 +1596,8 @@ CFramebuffer* CGL21Device::CreateFramebuffer(std::string name, const Framebuffer
 
     if (m_framebufferSupport == FBS_ARB)
         framebuffer = MakeUnique<CGLFramebuffer>(params);
-    else if (m_framebufferSupport == FBS_EXT)
-        framebuffer = MakeUnique<CGLFramebufferEXT>(params);
+    // else if (m_framebufferSupport == FBS_EXT)
+        // framebuffer = MakeUnique<CGLFramebufferEXT>(params);
     else
         return nullptr;
 
