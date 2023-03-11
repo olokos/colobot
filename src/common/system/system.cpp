@@ -150,12 +150,16 @@ TimeUtils::TimeStamp CSystemUtils::GetCurrentTimeStamp()
 
 std::string CSystemUtils::GetBasePath()
 {
+/*
     if (m_basePath.empty())
     {
-        auto* path = SDL_GetBasePath();
+        char[]* path = .c_str();
         m_basePath = path;
         SDL_free(path);
     }
+    */
+
+    auto m_basePath = "ux0:/data/colobot-vita/";
     return m_basePath;
 }
 

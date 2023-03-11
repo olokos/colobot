@@ -104,9 +104,15 @@ The current layout is the following:
 //! Entry point to the program
 extern "C"
 {
+    //Vita custom below
+    int _newlib_heap_size_user = 128 * 1024 * 1024; // Set newlib heap size
+    unsigned int _pthread_stack_default_user = 1 * 1024 * 1024; // Set pthread stack size
+    unsigned int sceLibcHeapSize = 10 * 1024 * 1024; // Set libc heap size
 
 int main(int argc, char *argv[])
 {
+    // Vita SDL init for SDL PVR
+    SDL_setenv("VITA_PVR_OGL", "1", 1);
     CLogger logger; // single instance of logger
     logger.AddOutput(stderr);
 
