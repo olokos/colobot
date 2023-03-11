@@ -23,7 +23,7 @@
 #include "common/logger.h"
 #include "common/make_unique.h"
 
-#include "graphics/opengl/gl14device.h"
+//#include "graphics/opengl/gl14device.h"
 #include "graphics/opengl/gl21device.h"
 #include "graphics/opengl/gl33device.h"
 
@@ -41,51 +41,53 @@ namespace Gfx
 GLuint textureCoordinates[] = { GL_S, GL_T, GL_R, GL_Q };
 GLuint textureCoordGen[] = { GL_TEXTURE_GEN_S, GL_TEXTURE_GEN_T, GL_TEXTURE_GEN_R, GL_TEXTURE_GEN_Q };
 
-bool InitializeGLEW()
-{
-    static bool glewInited = false;
+// bool InitializeGLEW()
+// {
+//     static bool glewInited = false;
 
-    if (!glewInited)
-    {
-        glewExperimental = GL_TRUE;
+//     if (!glewInited)
+//     {
+//         glewExperimental = GL_TRUE;
 
-        if (glewInit() != GLEW_OK)
-        {
-            GetLogger()->Error("GLEW initialization failed\n");
-            return false;
-        }
+//         if (glewInit() != GLEW_OK)
+//         {
+//             GetLogger()->Error("GLEW initialization failed\n");
+//             return false;
+//         }
 
-        glewInited = true;
-    }
+//         glewInited = true;
+//     }
 
-    return true;
-}
+//     return true;
+// }
 
 FramebufferSupport DetectFramebufferSupport()
 {
     if (GetOpenGLVersion() >= 30) return FBS_ARB;
-    if (glewIsSupported("GL_ARB_framebuffer_object")) return FBS_ARB;
-    if (glewIsSupported("GL_EXT_framebuffer_object")) return FBS_EXT;
+    if (GL_ARB_framebuffer_object) return FBS_ARB;
+    if (GL_EXT_framebuffer_object) return FBS_EXT;
     return FBS_NONE;
 }
 
 std::unique_ptr<CDevice> CreateDevice(const DeviceConfig &config, const std::string& name)
 {
-    if      (name == "default") return MakeUnique<CGL14Device>(config);
-    else if (name == "opengl")  return MakeUnique<CGL14Device>(config);
-    else if (name == "gl14")    return MakeUnique<CGL14Device>(config);
-    else if (name == "gl21")    return MakeUnique<CGL21Device>(config);
-    else if (name == "gl33")    return MakeUnique<CGL33Device>(config);
-    else if (name == "auto")
-    {
-        int version = GetOpenGLVersion();
+    // if      (name == "default") return MakeUnique<CGL14Device>(config);
+    // else if (name == "opengl")  return MakeUnique<CGL14Device>(config);
+    // else if (name == "gl14")    return MakeUnique<CGL14Device>(config);
+    // else if (name == "gl21")    return MakeUnique<CGL21Device>(config);
+    // else if (name == "gl33")    return MakeUnique<CGL33Device>(config);
+    // else if (name == "auto")
+    // {
+    //     int version = GetOpenGLVersion();
 
-             if (version >= 33) return MakeUnique<CGL33Device>(config);
-        else if (version >= 21) return MakeUnique<CGL21Device>(config);
-        else                    return MakeUnique<CGL14Device>(config);
-    }
+    //          if (version >= 33) return MakeUnique<CGL33Device>(config);
+    //     else if (version >= 21) return MakeUnique<CGL21Device>(config);
+    //     else                    return MakeUnique<CGL14Device>(config);
+    // }
 
-    return nullptr;
+    // return nullptr;
+
+    return MakeUnique<CGL21Device>(config);
 }
 
 int GetOpenGLVersion()
@@ -202,7 +204,7 @@ std::string GetHardwareInfo(bool full)
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &value);
     result << "Max Texture Size:\t\t" << value << '\n';
 
-    if (glewIsSupported("GL_EXT_texture_filter_anisotropic"))
+    if (GL_EXT_texture_filter_anisotropic)
     {
         result << "Anisotropic filtering:\t\tsupported\n";
 
@@ -264,7 +266,7 @@ std::string GetHardwareInfo(bool full)
         glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS_EXT, &value);
         result << "    Max Color Attachments:\t" << value << '\n';
 
-        if (glewIsSupported("GL_EXT_framebuffer_multisample"))
+        if (GL_EXT_framebuffer_multisample)
         {
             result << "Multisampling:\tsupported\n";
 
@@ -282,7 +284,7 @@ std::string GetHardwareInfo(bool full)
     {
         result << "VBO:\t\t\tsupported (core)\n";
     }
-    else if (glewIsSupported("GL_ARB_vertex_buffer_object"))
+    else if (GL_ARB_vertex_buffer_object)
     {
         result << "VBO:\t\t\tsupported (ARB)\n";
     }
