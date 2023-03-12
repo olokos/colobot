@@ -797,7 +797,7 @@ bool CApplication::CreateVideoSurface()
 
     // set OpenGL context profile
     // -glprofile switch overrides config settings
-    int profile = 4;
+    int profile = 0;
 
     if (m_glProfileOverride)
     {
