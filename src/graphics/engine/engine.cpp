@@ -191,10 +191,10 @@ CEngine::CEngine(CApplication *app, CSystemUtils* systemUtils)
     m_terrainVision = 1000.0f;
     m_textureMipmapLevel = 1;
     m_textureAnisotropy = 1;
-    m_shadowMapping = true;
-    m_offscreenShadowRendering = true;
+    m_shadowMapping = false;
+    m_offscreenShadowRendering = false;
     m_offscreenShadowRenderingResolution = 1024;
-    m_qualityShadows = true;
+    m_qualityShadows = false;
     m_terrainShadows = false;
     m_shadowRange = 0.0f;
     m_multisample = 2;

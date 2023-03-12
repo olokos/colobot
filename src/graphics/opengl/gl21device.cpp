@@ -229,7 +229,7 @@ bool CGL21Device::Create()
         GetLogger()->Info("Multisampling not supported\n");
     }
 
-    m_capabilities.shadowMappingSupported = true;
+    m_capabilities.shadowMappingSupported = false; //No shadowmapping on vita
 
     // This is mostly done in all modern hardware by default
     // DirectX doesn't even allow the option to turn off perspective correction anymore
