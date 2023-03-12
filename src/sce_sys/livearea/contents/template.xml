@@ -2,10 +2,10 @@
 
 <livearea style="a1" format-ver="01.00" content-rev="1">
 	<livearea-background>
-		<image>bg.png</image>
+		<image>vita_background.png</image>
 	</livearea-background>
 	
 	<gate>
-		<startup-image>startup.png</startup-image>
+		<startup-image>logo_astro.png</startup-image>
 	</gate>
 </livearea>
