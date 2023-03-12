@@ -618,10 +618,12 @@ elseif(PLATFORM_OTHER) # PLATFORM - VITA
         endif()
     endif()
 
+    set(VITA_MKSFOEX_FLAGS "${VITA_MKSFOEX_FLAGS} -d ATTRIBUTE2=12")
+
     #SET(PROJECT_NAME colobotbase)
     SET(VITA_APP_NAME "Colobot Gold - Vita")
     SET(VITA_TITLEID "COLO30777")
-    SET(VITA_VERSION 00.25)
+    SET(VITA_VERSION 00.21)
 
     include("${VITASDK}/share/vita.cmake" REQUIRED)
 

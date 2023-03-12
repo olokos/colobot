@@ -105,7 +105,7 @@ The current layout is the following:
 extern "C"
 {
     //Vita custom below
-    int _newlib_heap_size_user = 128 * 1024 * 1024; // Set newlib heap size
+    int _newlib_heap_size_user = 256 * 1024 * 1024; // Set newlib heap size
     unsigned int _pthread_stack_default_user = 1 * 1024 * 1024; // Set pthread stack size
     unsigned int sceLibcHeapSize = 10 * 1024 * 1024; // Set libc heap size
 
