@@ -65,13 +65,13 @@ struct VertexTex2;
 struct DeviceConfig
 {
     //! Screen size
-    Math::IntPoint size = Math::IntPoint(800, 600);
+    Math::IntPoint size = Math::IntPoint(960, 544);
     //! Bits per pixel
     int bpp = 32;
     //! Full screen
-    bool fullScreen = false;
+    bool fullScreen = true;
     //! Resizeable window
-    bool resizeable = true;
+    bool resizeable = false;
     //! Double buffering
     bool doubleBuf = true;
     //! No window frame (also set with full screen)
