@@ -258,7 +258,7 @@ option(DESKTOP "Generate desktop files, manpages, etc" OFF)
 option(INSTALL_DOCS "Install Doxygen-generated documentation" OFF)
 
 # Build OpenAL sound support
-option(OPENAL_SOUND "Build OpenAL sound support" OFF)
+option(OPENAL_SOUND "Build OpenAL sound support" ON)
 
 # Link runtime library statically (currently only works for MSVC)
 option(USE_STATIC_RUNTIME "Link the runtime library statically" ON)

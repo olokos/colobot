@@ -539,7 +539,9 @@ if(OPENAL_SOUND)
         sound/oalsound/channel.h
         sound/oalsound/check.h
     )
-    target_link_libraries(colobotbase PUBLIC OpenAL::OpenAL)
+    target_link_libraries(colobotbase PUBLIC OpenAL::OpenAL
+    SceAudio_stub
+    )
 endif()
 
 if(WINGETOPT)
