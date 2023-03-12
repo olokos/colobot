@@ -797,7 +797,7 @@ bool CApplication::CreateVideoSurface()
 
     // set OpenGL context profile
     // -glprofile switch overrides config settings
-    int profile = 0;
+    int profile = 4;
 
     if (m_glProfileOverride)
     {
@@ -855,11 +855,15 @@ bool CApplication::CreateVideoSurface()
         SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
     m_private->window = SDL_CreateWindow(m_windowTitle.c_str(),
-                                         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                                         m_deviceConfig.size.x, m_deviceConfig.size.y,
+                                         0, 0,
+                                         960, 544,
                                          videoFlags);
 
     m_private->glcontext = SDL_GL_CreateContext(m_private->window);
+
+    if (!m_private->glcontext) GetLogger()->Info("CreateContext failed: %s\n", SDL_GetError()); // Check if context was created
+
+    SDL_GL_MakeCurrent(m_private->window, m_private->glcontext); // initialize OpenGL on Vita!
 
     int vsync = 0;
     if (GetConfigFile().GetIntProperty("Setup", "VSync", vsync))
@@ -1938,18 +1942,18 @@ void CApplication::SetLanguage(Language language)
     std::string langStr = "LANGUAGE=";
     langStr += locale;
     strcpy(m_languageLocale, langStr.c_str());
-    putenv(m_languageLocale);
-    GetLogger()->Trace("SetLanguage: Set LANGUAGE=%s in environment\n", locale.c_str());
+    //putenv(m_languageLocale);
+    GetLogger()->Info("SetLanguage: Set LANGUAGE=%s in environment\n", locale.c_str());
 
     char* defaultLocale = setlocale(LC_ALL, ""); // Load system locale
-    GetLogger()->Debug("Default system locale: %s\n", defaultLocale);
+    GetLogger()->Info("Default system locale: %s\n", defaultLocale);
     if (!locale.empty()) // Override system locale?
     {
         setlocale(LC_ALL, locale.c_str());
     }
     setlocale(LC_NUMERIC, "C"); // Force numeric locale to "C" (fixes decimal point problems)
     std::string systemLocale = setlocale(LC_ALL, nullptr); // Get current locale configuration
-    GetLogger()->Debug("Setting locale: %s\n", systemLocale.c_str());
+    GetLogger()->Info("Setting locale: %s\n", systemLocale.c_str());
     // Update C++ locale
     try
     {
@@ -1981,7 +1985,7 @@ void CApplication::SetLanguage(Language language)
     bind_textdomain_codeset("colobot", "UTF-8");
     textdomain("colobot");
 
-    GetLogger()->Debug("SetLanguage: Test gettext translation: '%s'\n", gettext("Colobot rules!"));
+    GetLogger()->Info("SetLanguage: Test gettext translation: '%s'\n", gettext("Colobot rules!"));
 }
 
 bool CApplication::GetSceneTestMode()
