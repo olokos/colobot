@@ -127,7 +127,7 @@ std::string ToString(FontType type)
 
 namespace
 {
-const Math::IntPoint REFERENCE_SIZE(960, 544);
+const Math::IntPoint REFERENCE_SIZE(800, 600);
 const Math::IntPoint FONT_TEXTURE_SIZE(256, 256);
 
 Gfx::FontType ToBoldFontType(Gfx::FontType type)
