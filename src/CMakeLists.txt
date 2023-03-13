@@ -1,11 +1,19 @@
-# Compiler Flags for PSVita (below line and std c++11)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wl,-q -O2 -ffast-math -mtune=cortex-a9 -mfpu=neon -ftree-vectorize -Wno-deprecated-declarations")
+# # Compiler Flags for PSVita (below line and std c++11)
+# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wl,-q -O2 -ffast-math -mtune=cortex-a9 -mfpu=neon -ftree-vectorize -Wno-deprecated-declarations")
 
+
+# # Compile flags as defined in global CMakeLists
+# set(CMAKE_CXX_FLAGS "${COLOBOT_CXX_FLAGS} ${CMAKE_C_FLAGS} -std=c++11")
+# set(CMAKE_CXX_FLAGS_RELEASE "${COLOBOT_CXX_FLAGS_RELEASE} ${CMAKE_C_FLAGS} -std=c++11")
+# set(CMAKE_CXX_FLAGS_DEBUG "${COLOBOT_CXX_FLAGS_DEBUG} ${CMAKE_C_FLAGS} -std=c++11")
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -g -O3 -mfloat-abi=hard -Wno-strict-aliasing -mfpu=neon -mtune=cortex-a9 -Wno-deprecated-declarations -Wl,-q")
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++11")
 
 # Compile flags as defined in global CMakeLists
-set(CMAKE_CXX_FLAGS "${COLOBOT_CXX_FLAGS} ${CMAKE_C_FLAGS} -std=c++11")
-set(CMAKE_CXX_FLAGS_RELEASE "${COLOBOT_CXX_FLAGS_RELEASE} ${CMAKE_C_FLAGS} -std=c++11")
-set(CMAKE_CXX_FLAGS_DEBUG "${COLOBOT_CXX_FLAGS_DEBUG} ${CMAKE_C_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${COLOBOT_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS_RELEASE "${COLOBOT_CXX_FLAGS_RELEASE} ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS_DEBUG "${COLOBOT_CXX_FLAGS_DEBUG} ${CMAKE_CXX_FLAGS}")
 
 # Subdirectories
 add_subdirectory(CBot)

@@ -227,7 +227,7 @@ set(COLOBOT_GTEST_CXX_FLAGS "${TEST_CXX_FLAGS}")
 option(ASSERTS "Enable assert()s" ON)
 
 # Development build can be enabled/disabled regardless of build type
-option(DEV_BUILD "Enable development build (enables some debugging tools, local setting paths, etc.)" ON)
+option(DEV_BUILD "Enable development build (enables some debugging tools, local setting paths, etc.)" OFF)
 
 # Official build - changes text on the crash screen
 # PLEASE DO NOT USE ON UNOFFICIAL BUILDS. Thanks.
@@ -413,7 +413,7 @@ elseif(PLATFORM_MACOSX)
     set(COLOBOT_INSTALL_BIN_DIR ../MacOS CACHE STRING "Colobot binary directory")
     set(COLOBOT_INSTALL_LIB_DIR ../MacOS CACHE STRING "Colobot libraries directory")
     set(COLOBOT_INSTALL_DATA_DIR . CACHE STRING "Colobot shared data directory")
-    set(COLOBOT_INSTALL_I18N_DIR i18n CACHE SRING "Colobot translations directory")
+    set(COLOBOT_INSTALL_I18N_DIR i18n CACHE STRING "Colobot translations directory")
     set(COLOBOT_INSTALL_DOC_DIR doc CACHE STRING "Colobot documentation directory")
 else()
     set(COLOBOT_INSTALL_BIN_DIR ${CMAKE_INSTALL_PREFIX}/games CACHE PATH "Colobot binary directory")
