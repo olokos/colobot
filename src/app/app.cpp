@@ -1043,12 +1043,12 @@ void CApplication::UpdateJoystick()
 
             if (newValue)
             {
-                joyButtonEvent.jbutton.type = SDL_JOYBUTTONDOWN;
+                joyButtonEvent.jbutton.type = EVENT_KEY_DOWN;
                 joyButtonEvent.jbutton.state = SDL_PRESSED;
             }
             else
             {
-                joyButtonEvent.jbutton.type = SDL_JOYBUTTONUP;
+                joyButtonEvent.jbutton.type = EVENT_KEY_UP;
                 joyButtonEvent.jbutton.state = SDL_RELEASED;
             }
             joyButtonEvent.jbutton.which = 0;
@@ -1346,10 +1346,10 @@ Event CApplication::ProcessSystemEvent()
         data->value = m_private->currentEvent.jaxis.value;
         event.data = std::move(data);
     }
-    else if ( (m_private->currentEvent.type == SDL_JOYBUTTONDOWN) ||
-              (m_private->currentEvent.type == SDL_JOYBUTTONUP) )
+    else if ( (m_private->currentEvent.type == EVENT_KEY_DOWN) ||
+              (m_private->currentEvent.type == EVENT_KEY_UP) )
     {
-        if (m_private->currentEvent.type == SDL_JOYBUTTONDOWN)
+        if (m_private->currentEvent.type == EVENT_KEY_DOWN)
             event.type = EVENT_JOY_BUTTON_DOWN;
         else
             event.type = EVENT_JOY_BUTTON_UP;
