@@ -797,7 +797,7 @@ bool CApplication::CreateVideoSurface()
 
     // set OpenGL context profile
     // -glprofile switch overrides config settings
-    int profile = 0;
+    int profile = 4;
 
     if (m_glProfileOverride)
     {
@@ -855,8 +855,8 @@ bool CApplication::CreateVideoSurface()
         SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
     m_private->window = SDL_CreateWindow(m_windowTitle.c_str(),
-                                         0, 0,
-                                         960, 544,
+                                         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                                         m_deviceConfig.size.x, m_deviceConfig.size.y,
                                          videoFlags);
 
     m_private->glcontext = SDL_GL_CreateContext(m_private->window);

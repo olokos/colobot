@@ -124,7 +124,8 @@ int main(int argc, char *argv[])
     // Add file output to the logger
     std::string logFileName;
     #if DEV_BUILD
-        logFileName = "log.txt";
+        boost::filesystem::create_directories(systemUtils->GetSaveDir());
+        logFileName = systemUtils->GetSaveDir() + "/log.txt";
     #else
         boost::filesystem::create_directories(systemUtils->GetSaveDir());
         logFileName = systemUtils->GetSaveDir() + "/log.txt";
