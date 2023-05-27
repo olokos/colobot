@@ -200,7 +200,7 @@ bool CGL21Device::Create()
     GetLogger()->Info("%s\n", renderer);
 
     // Detect support of anisotropic filtering
-    m_capabilities.anisotropySupported = GL_EXT_texture_filter_anisotropic;
+    m_capabilities.anisotropySupported = false; // No anisotropic filtering on vita
     if (m_capabilities.anisotropySupported)
     {
         // Obtain maximum anisotropy level available
